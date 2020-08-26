@@ -4,7 +4,8 @@ var arrflights = new Array();
 var nbSteps = 100;
 var interval = 75;
 var currentTime = 0;
-function Plane(posX = "", posY = "", destinationX = "", destinationY = "",departureTime=""){
+// error for constructor
+function Plane(posX , posY , destinationX , destinationY ,departureTime ){
 	this.src = "img/plane.jpg";
 	this.imgWidth = 40;
 	this.imgHeight = 40;
@@ -36,17 +37,18 @@ function generateRand(max = 250){
 
 function drawMap(){
 	var map = document.createElement("img");
-	map.setAttribute("src", "Canada-1280-1107.png");
+	map.setAttribute("src", "img/Canada-1280-1107.png"); // here source of the image was not right  so we added correct path.
 	map.setAttribute("width", canvas.width);
 	map.setAttribute("height", canvas.height);
+	//fix for web 1
 	ctx.drawImage(map, 0, 0, canvas.width, canvas.height);
 }
 
-function drawMovement(){
+function drawMovement(){   // Current time is 0 initialized should be increment by 1
     currentTime++;
 	drawMap();
 	for(i = 0; i < arrflights.length; i++){  
-        if(arrflights[i].departureTime < currentTime){
+        if(arrflights[i].departureTime <= currentTime){
             arrflights[i].updateLocation();
 		    arrflights[i].draw();
         }
@@ -63,16 +65,19 @@ $(document).ready(function(){
 	ctx = canvas.getContext('2d');
 	drawMap();
     // 1.1 Json structure is incorrect
-	var flightJson = '{"flights":[{"departure":"Quebec","departureX":"734","departureY":"427","departureTime":"11","arrival":"Fredericton","arrivalX":"800","arrivalY":"422","duration":"6"},{"departure":"Quebec","departureX":"734","departureY":"427","departureTime":"109","arrival":"Yellowknife","arrivalX":"285","arrivalY":"271","duration":"6"},{"departure":"Quebec","departureX":"734","departureY":"427","departureTime":"62","arrival":"Regina","arrivalX":"336","arrivalY":"417","duration":"6"}]}';
+	var flightJson = '{"flights":[{"departure":"Quebec","departureX":734,"departureY":427,"departureTime":"11","arrival":"Fredericton","arrivalX":"800","arrivalY":"422","duration":"6"},{"departure":"Quebec","departureX":734,"departureY":427,"departureTime":"109","arrival":"Yellowknife","arrivalX":"285","arrivalY":"271","duration":"6"},{"departure":"Quebec","departureX":734,"departureY":427,"departureTime":"62","arrival":"Regina","arrivalX":"336","arrivalY":"417","duration":"6"}]}';
     var JSONObject = JSON.parse(flightJson);
-	var flights = JSONObject.flight;
+	var flights = JSONObject.flights;
+	 // error there is an s is missing in flights variable
     console.log(flights);
 	$("#myCanvas").click(function(){
 		var myPlane;
     for (flight in flights)
     {   
-        myPlane = new Plane(flight.departureX, flight.departureY, flight.arrivalX, flight.arrivalY,flight.departureTime);
-        arrflights.push(myPlane);
+        myPlane = new Plane(flights[flight].departureX, flights[flight].departureY, flights[flight].arrivalX, flights[flight].arrivalY,flights[flight].departureTime);
+        // it was not pointing any object so we give it right arrayofobject to point
+       // error in for loop for undefined data
+         arrflights.push(myPlane);
     } 
     setInterval(drawMovement, interval); 
 	});
